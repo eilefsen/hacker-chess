@@ -1,0 +1,5 @@
+.project.el
+build/
+.cache/
+.DS_Store
+lib/
