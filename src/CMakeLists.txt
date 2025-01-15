@@ -1,5 +1,10 @@
-add_executable(${PROJECT_NAME} main.c)
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/)
+add_executable(${PROJECT_NAME}
+  main.c validate.c move.c util.c
+  pieces/pawn.c pieces/knight.c pieces/king.c
+)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/
+)
 target_compile_options(
 	${PROJECT_NAME}
 	PRIVATE

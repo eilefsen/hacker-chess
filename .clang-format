@@ -1,14 +1,31 @@
 BasedOnStyle: LLVM
 IndentWidth: 4
+ContinuationIndentWidth: 4
 TabWidth: 4
 UseTab: Always
 AllowShortIfStatementsOnASingleLine: false
 IndentCaseLabels: false
 
 AlignOperands: Align
+AlignArrayOfStructures: Right
 AlignAfterOpenBracket: BlockIndent
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Inline
+
+AlwaysBreakBeforeMultilineStrings: true
+
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: AfterColon
+
+PenaltyBreakAssignment: 10
+
+InsertBraces: true
+
 
 ColumnLimit: 90
 
 BinPackArguments: false
-ContinuationIndentWidth: 4
+BinPackParameters: false
+
