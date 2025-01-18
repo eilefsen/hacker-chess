@@ -8,8 +8,8 @@ bool validate_pawn_move(Board *b, Move m, enum Color c) {
 	}
 	int one_forward = m.from.y + (1 * c);
 	int two_forward = m.from.y + (2 * c);
-	bool diagonal =
-		m.to.y == one_forward && (m.from.x == m.to.x + 1 || m.from.x == m.to.x - 1);
+	bool diagonal = m.to.y == one_forward &&
+					(m.from.x == m.to.x + 1 || m.from.x == m.to.x - 1);
 	if (diagonal && validate_takes(b, m.to, c)) {
 		// pawn takes, valid move
 		puts("Pawn takes!");
@@ -19,8 +19,8 @@ bool validate_pawn_move(Board *b, Move m, enum Color c) {
 	Piece from_p = b->pieces[m.from.y][m.from.x];
 	Piece to_p = b->pieces[m.to.y][m.to.x];
 
-	bool same_file = m.from.x == m.to.x;
-	if (same_file) {
+	bool same_rank = m.from.x == m.to.x;
+	if (same_rank) {
 		bool first_move = !from_p.has_moved;
 		if (m.to.y == two_forward && first_move && to_p.kind == None) {
 			// pawn moves two squares forward

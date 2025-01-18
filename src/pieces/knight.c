@@ -9,13 +9,13 @@
 bool _validate_knight_move_diff(Move m) {
 	Coordinate diff = move_diff(m);
 	Coordinate ideal[8] = {
-		{.x = 1, .y = 2},
-		{.x = 1, .y = -2},
-		{.x = -1, .y = 2},
+		{ .x = 1,	 .y = 2},
+		{ .x = 1, .y = -2},
+		{.x = -1,  .y = 2},
 		{.x = -1, .y = -2},
-		{.x = 2, .y = 1},
-		{.x = 2, .y = -1},
-		{.x = -2, .y = 1},
+		{ .x = 2,	 .y = 1},
+		{ .x = 2, .y = -1},
+		{.x = -2,  .y = 1},
 		{.x = -2, .y = -1},
 	};
 
@@ -36,9 +36,9 @@ bool validate_knight_move(Board *b, Move m, enum Color c) {
 		return false;
 	}
 
-	if (validate_takes(b, m.to, c) || b->pieces[m.to.y][m.to.x].kind == None) {
+	if (validate_takes(b, m.to, c)) {
 		puts("Knight takes!");
 		return true;
 	}
-	return false;
+	return b->pieces[m.to.y][m.to.x].kind == None;
 }

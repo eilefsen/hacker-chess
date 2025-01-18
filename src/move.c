@@ -1,9 +1,11 @@
 #include <stdio.h>
 
 #include "move.h"
+#include "pieces/bishop.h"
 #include "pieces/king.h"
 #include "pieces/knight.h"
 #include "pieces/pawn.h"
+#include "pieces/rook.h"
 
 void move_piece(Board *b, Move m) {
 	// set to piece to the value of from piece
@@ -40,8 +42,20 @@ bool make_move(Board *b, Move m, enum Color c) {
 	case Pawn:
 		is_valid = validate_pawn_move(b, m, c);
 		break;
+	case Knight:
+		is_valid = validate_knight_move(b, m, c);
+		break;
+	case Rook:
+		is_valid = validate_rook_move(b, m, c);
+		break;
+	case Bishop:
+		is_valid = validate_bishop_move(b, m, c);
+		break;
+	case Queen:
+		is_valid = validate_rook_move(b, m, c) || validate_bishop_move(b, m, c);
+		break;
 	case King:
-		// TODO: check that this works
+		// TODO: check that this works in all cases
 		king_m = validate_king_move(b, m, c);
 		if (king_m.valid) {
 			if (king_m.castle == Short_Castle) {
@@ -55,15 +69,6 @@ bool make_move(Board *b, Move m, enum Color c) {
 		} else {
 			return false;
 		}
-	case Queen:
-		return false;
-	case Bishop:
-		return false;
-	case Knight:
-		is_valid = validate_knight_move(b, m, c);
-		break;
-	case Rook:
-		return false;
 	}
 
 	if (is_valid) {
