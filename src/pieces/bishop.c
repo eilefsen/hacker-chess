@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "shared.h"
+
 bool validate_bishop_move(Board *b, Move m, enum Color c) {
 	if (!validate_basic(m)) {
 		return false;
@@ -17,17 +19,10 @@ bool validate_bishop_move(Board *b, Move m, enum Color c) {
 		return false;
 	}
 
-	for (int i = 0; i < abs(diff.y); ++i) {
-		int y = diff.y > 0 ? m.to.y + i : m.to.y - i;
-		int x = diff.x > 0 ? m.to.x + i : m.to.x - i;
-
-		Piece p = b->pieces[y][x];
-
-		if (p.kind != None && !(takes && i == abs(diff.y) - 1)) {
-			puts("Obstructed");
-			return false;
-		}
+	if (!validate_diagonal_move(b, m, diff, takes)) {
+		return false;
 	}
+
 	if (takes) {
 		puts("Bishop takes!");
 		return true;

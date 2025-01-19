@@ -5,6 +5,7 @@
 #include "pieces/king.h"
 #include "pieces/knight.h"
 #include "pieces/pawn.h"
+#include "pieces/queen.h"
 #include "pieces/rook.h"
 
 void move_piece(Board *b, Move m) {
@@ -52,17 +53,41 @@ bool make_move(Board *b, Move m, enum Color c) {
 		is_valid = validate_bishop_move(b, m, c);
 		break;
 	case Queen:
-		is_valid = validate_rook_move(b, m, c) || validate_bishop_move(b, m, c);
+		is_valid = validate_queen_move(b, m, c);
 		break;
 	case King:
 		// TODO: check that this works in all cases
 		king_m = validate_king_move(b, m, c);
 		if (king_m.valid) {
 			if (king_m.castle == Short_Castle) {
-				// TODO: implement castling
+				// TODO: implement castling check interrupt
+				b->pieces[m.to.y][6] = b->pieces[m.from.y][4];
+				b->pieces[m.to.y][6].has_moved = true;
+				b->pieces[m.from.y][4].kind = None;
+				b->pieces[m.from.y][4].color = NoneC;
+				b->pieces[m.from.y][4].has_moved = false;
+
+				b->pieces[m.to.y][5] = b->pieces[m.from.y][7];
+				b->pieces[m.to.y][5].has_moved = true;
+				b->pieces[m.from.y][7].kind = None;
+				b->pieces[m.from.y][7].color = NoneC;
+				b->pieces[m.from.y][7].has_moved = false;
+
 				return true;
 			} else if (king_m.castle == Long_Castle) {
-				// TODO: implement castling
+				// TODO: implement castling check interrupt
+
+				b->pieces[m.to.y][2] = b->pieces[m.from.y][4];
+				b->pieces[m.to.y][2].has_moved = true;
+				b->pieces[m.from.y][4].kind = None;
+				b->pieces[m.from.y][4].color = NoneC;
+				b->pieces[m.from.y][4].has_moved = false;
+
+				b->pieces[m.to.y][3] = b->pieces[m.from.y][0];
+				b->pieces[m.to.y][3].has_moved = true;
+				b->pieces[m.from.y][0].kind = None;
+				b->pieces[m.from.y][0].color = NoneC;
+				b->pieces[m.from.y][0].has_moved = false;
 				return true;
 			}
 			is_valid = true;

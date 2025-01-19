@@ -1,9 +1,10 @@
-
-#include "queen.h"
-#include "../util.h"
-#include "../validate.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "../util.h"
+#include "../validate.h"
+#include "queen.h"
+#include "shared.h"
 
 bool validate_queen_move(Board *b, Move m, enum Color c) {
 	if (!validate_basic(m)) {
@@ -13,24 +14,24 @@ bool validate_queen_move(Board *b, Move m, enum Color c) {
 	Coordinate diff = move_diff(m);
 	bool takes = validate_takes(b, m.to, c);
 
-	if (abs(diff.x) != abs(diff.y)) {
-		puts("Bishop has to move diagonally");
+	bool diag = abs(diff.x) == abs(diff.y);
+	bool strt = (diff.x && !diff.y) || (diff.y && !diff.x);
+
+	if (diag) {
+		if (!validate_diagonal_move(b, m, diff, takes)) {
+			return false;
+		}
+	} else if (strt) {
+		if (!validate_straight_move(b, m, diff, takes)) {
+			return false;
+		}
+	} else {
+		fputs("Queen has to move either diagonally or straight", stderr);
 		return false;
 	}
 
-	for (int i = 0; i < abs(diff.y); ++i) {
-		int y = diff.y > 0 ? m.to.y + i : m.to.y - i;
-		int x = diff.x > 0 ? m.to.x + i : m.to.x - i;
-
-		Piece p = b->pieces[y][x];
-
-		if (p.kind != None && !(takes && i == abs(diff.y) - 1)) {
-			puts("Obstructed");
-			return false;
-		}
-	}
 	if (takes) {
-		puts("Bishop takes!");
+		puts("Queen takes!");
 		return true;
 	}
 
