@@ -2,7 +2,7 @@
 #include "../validate.h"
 #include <stdio.h>
 
-bool validate_pawn_move(Board *b, Move m, enum Color c) {
+bool validate_pawn_move(Board *b, Move m, enum Color c, bool should_print) {
 	if (!validate_basic(m)) {
 		return false;
 	}
@@ -12,7 +12,9 @@ bool validate_pawn_move(Board *b, Move m, enum Color c) {
 					(m.from.x == m.to.x + 1 || m.from.x == m.to.x - 1);
 	if (diagonal && validate_takes(b, m.to, c)) {
 		// pawn takes, valid move
-		puts("Pawn takes!");
+		if (should_print) {
+			puts("Pawn takes!");
+		}
 		return true;
 	}
 

@@ -6,7 +6,7 @@
 
 #include "shared.h"
 
-bool validate_bishop_move(Board *b, Move m, enum Color c) {
+bool validate_bishop_move(Board *b, Move m, enum Color c, bool should_print) {
 	if (!validate_basic(m)) {
 		return false;
 	}
@@ -15,7 +15,9 @@ bool validate_bishop_move(Board *b, Move m, enum Color c) {
 	bool takes = validate_takes(b, m.to, c);
 
 	if (abs(diff.x) != abs(diff.y)) {
-		puts("Bishop has to move diagonally");
+		if (should_print) {
+			puts("Bishop has to move diagonally");
+		}
 		return false;
 	}
 
@@ -24,7 +26,9 @@ bool validate_bishop_move(Board *b, Move m, enum Color c) {
 	}
 
 	if (takes) {
-		puts("Bishop takes!");
+		if (should_print) {
+			puts("Bishop takes!");
+		}
 		return true;
 	}
 

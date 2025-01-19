@@ -4,7 +4,7 @@
 #include "shared.h"
 #include <stdio.h>
 
-bool validate_rook_move(Board *b, Move m, enum Color c) {
+bool validate_rook_move(Board *b, Move m, enum Color c, bool should_print) {
 	if (!validate_basic(m)) {
 		return false;
 	}
@@ -14,7 +14,9 @@ bool validate_rook_move(Board *b, Move m, enum Color c) {
 
 	bool strt = (diff.x && !diff.y) || (diff.y && !diff.x);
 	if (!strt) {
-		fputs("Rook must move along the same file or rank as it started\n", stderr);
+		if (should_print) {
+			fputs("Rook must move along the same file or rank as it started\n", stderr);
+		}
 		return false;
 	}
 
@@ -23,7 +25,9 @@ bool validate_rook_move(Board *b, Move m, enum Color c) {
 	}
 
 	if (takes) {
-		puts("Rook takes!");
+		if (should_print) {
+			puts("Rook takes!");
+		}
 		return true;
 	}
 

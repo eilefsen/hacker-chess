@@ -1,5 +1,5 @@
 add_executable(${PROJECT_NAME}
-		main.c validate.c move.c util.c
+		main.c validate.c move.c util.c check.c
 		pieces/pawn.c pieces/knight.c pieces/king.c pieces/rook.c
 		pieces/bishop.c pieces/queen.c pieces/shared.c
 )

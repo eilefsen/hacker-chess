@@ -27,17 +27,21 @@ bool _validate_knight_move_diff(Move m) {
 	return false;
 }
 
-bool validate_knight_move(Board *b, Move m, enum Color c) {
+bool validate_knight_move(Board *b, Move m, enum Color c, bool should_print) {
 	if (!validate_basic(m)) {
 		return false;
 	}
 	if (!_validate_knight_move_diff(m)) {
-		fputs("Knight move does not fit pattern.", stderr);
+		if (should_print) {
+			fputs("Knight move does not fit pattern.", stderr);
+		}
 		return false;
 	}
 
 	if (validate_takes(b, m.to, c)) {
-		puts("Knight takes!");
+		if (should_print) {
+			puts("Knight takes!");
+		}
 		return true;
 	}
 	return b->pieces[m.to.y][m.to.x].kind == None;

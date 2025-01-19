@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "check.h"
+
 #include "move.h"
 #include "pieces/bishop.h"
 #include "pieces/king.h"
@@ -41,26 +43,33 @@ bool make_move(Board *b, Move m, enum Color c) {
 		is_valid = false;
 		break;
 	case Pawn:
-		is_valid = validate_pawn_move(b, m, c);
+		is_valid = validate_pawn_move(b, m, c, true);
 		break;
 	case Knight:
-		is_valid = validate_knight_move(b, m, c);
+		is_valid = validate_knight_move(b, m, c, true);
 		break;
 	case Rook:
-		is_valid = validate_rook_move(b, m, c);
+		is_valid = validate_rook_move(b, m, c, true);
 		break;
 	case Bishop:
-		is_valid = validate_bishop_move(b, m, c);
+		is_valid = validate_bishop_move(b, m, c, true);
 		break;
 	case Queen:
-		is_valid = validate_queen_move(b, m, c);
+		is_valid = validate_queen_move(b, m, c, true);
 		break;
 	case King:
 		// TODO: check that this works in all cases
-		king_m = validate_king_move(b, m, c);
+		king_m = validate_king_move(b, m, c, true);
 		if (king_m.valid) {
 			if (king_m.castle == Short_Castle) {
-				// TODO: implement castling check interrupt
+				Coordinate through = {.x = 5, .y = m.from.y};
+				if (detect_check(b, m.from) || detect_check(b, through) ||
+					detect_check(b, m.to)) {
+					fputs("Castle blocked by check!", stderr);
+					return false;
+				}
+
+				puts("King castles short!");
 				b->pieces[m.to.y][6] = b->pieces[m.from.y][4];
 				b->pieces[m.to.y][6].has_moved = true;
 				b->pieces[m.from.y][4].kind = None;
@@ -75,8 +84,14 @@ bool make_move(Board *b, Move m, enum Color c) {
 
 				return true;
 			} else if (king_m.castle == Long_Castle) {
-				// TODO: implement castling check interrupt
+				Coordinate through = {.x = 2, .y = m.from.y};
+				if (detect_check(b, m.from) || detect_check(b, through) ||
+					detect_check(b, m.to)) {
+					fputs("Castle blocked by check!\n", stderr);
+					return false;
+				}
 
+				puts("King castles long!");
 				b->pieces[m.to.y][2] = b->pieces[m.from.y][4];
 				b->pieces[m.to.y][2].has_moved = true;
 				b->pieces[m.from.y][4].kind = None;
@@ -88,7 +103,11 @@ bool make_move(Board *b, Move m, enum Color c) {
 				b->pieces[m.from.y][0].kind = None;
 				b->pieces[m.from.y][0].color = NoneC;
 				b->pieces[m.from.y][0].has_moved = false;
+
 				return true;
+			} else if (detect_check(b, m.to)) {
+				fputs("King would be in check!\n", stderr);
+				return false;
 			}
 			is_valid = true;
 		} else {

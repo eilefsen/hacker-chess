@@ -2,4 +2,4 @@
 
 #include "../types.h"
 
-bool validate_pawn_move(Board *b, Move m, enum Color c);
+bool validate_pawn_move(Board *b, Move m, enum Color c, bool should_print);

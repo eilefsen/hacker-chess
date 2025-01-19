@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "check.h"
 #include "move.h"
 #include "types.h"
 
@@ -35,7 +36,10 @@ ParseMoveResult parse_move(char s[INPUT_MAX]) {
 	char xc1, xc2;
 	// TODO: Implement a more robust parse verification
 	if (sscanf(s, "%1c%1d%1c%1d", &xc1, &y1, &xc2, &y2) != 4) {
-		ParseMoveResult out = {.move = {{0, 0}, {0, 0}}, .error = true};
+		ParseMoveResult out = {
+			.move = {{0, 0}, {0, 0}},
+			.error = true
+		};
 		return out;
 	}
 
@@ -43,13 +47,17 @@ ParseMoveResult parse_move(char s[INPUT_MAX]) {
 	struct CharResult xc2_conv = convert_cmd_letter(xc2);
 
 	if (xc1_conv.error || xc2_conv.error) {
-		ParseMoveResult out = {.move = {{0, 0}, {0, 0}}, .error = true};
+		ParseMoveResult out = {
+			.move = {{0, 0}, {0, 0}},
+			.error = true
+		};
 		return out;
 	}
 	x1 = xc1_conv.val, x2 = xc2_conv.val;
 
 	ParseMoveResult out = {
-		{.from = {.x = x1, .y = y1 - 1}, .to = {.x = x2, .y = y2 - 1}}, false
+		{.from = {.x = x1, .y = y1 - 1}, .to = {.x = x2, .y = y2 - 1}},
+		false
 	};
 	return out;
 }
@@ -94,6 +102,8 @@ int main(void) {
 	enum Color c = White;
 	draw(board);
 
+	bool check = false;
+
 	while (true) {
 		c = i % 2 == 0 ? White : Black; // white to play if `i` is even
 		printf("%s to play:\n", c == White ? "White" : "Black");
@@ -119,6 +129,10 @@ int main(void) {
 		};
 		moves[i] = m;
 		draw(board);
+		check = detect_check(&board, m.to);
+		if (check) {
+			puts("Check!");
+		}
 		++i;
 	}
 	printf("%d", moves[0].from.x);

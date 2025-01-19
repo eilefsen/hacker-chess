@@ -6,7 +6,7 @@
 #include "queen.h"
 #include "shared.h"
 
-bool validate_queen_move(Board *b, Move m, enum Color c) {
+bool validate_queen_move(Board *b, Move m, enum Color c, bool should_print) {
 	if (!validate_basic(m)) {
 		return false;
 	}
@@ -26,12 +26,16 @@ bool validate_queen_move(Board *b, Move m, enum Color c) {
 			return false;
 		}
 	} else {
-		fputs("Queen has to move either diagonally or straight", stderr);
+		if (should_print) {
+			fputs("Queen has to move either diagonally or straight", stderr);
+		}
 		return false;
 	}
 
 	if (takes) {
-		puts("Queen takes!");
+		if (should_print) {
+			puts("Queen takes!");
+		}
 		return true;
 	}
 

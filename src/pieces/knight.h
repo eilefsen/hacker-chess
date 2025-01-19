@@ -4,4 +4,4 @@
 
 bool _validate_knight_move_diff(Move m);
 
-bool validate_knight_move(Board *b, Move m, enum Color c);
+bool validate_knight_move(Board *b, Move m, enum Color c, bool should_print);

@@ -13,4 +13,4 @@ typedef struct KingMove {
 	enum Castle castle;
 } KingMove;
 
-KingMove validate_king_move(Board *b, Move m, enum Color c);
+KingMove validate_king_move(Board *b, Move m, enum Color c, bool should_print);
