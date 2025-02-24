@@ -1,5 +1,5 @@
-#include <stdbool.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "check.h"
@@ -103,6 +103,8 @@ int main(void) {
 	draw(board);
 
 	bool check = false;
+	Coordinate black_king_pos = {4,7};
+	Coordinate white_king_pos = {4,0};
 
 	while (true) {
 		c = i % 2 == 0 ? White : Black; // white to play if `i` is even
@@ -127,9 +129,16 @@ int main(void) {
 			fprintf(stderr, "Invalid move: %c %s\n", p.kind, in);
 			continue;
 		};
+		if (p.kind == 'K') {
+			if (c == White) {
+				white_king_pos = m.to;
+			} else {
+				black_king_pos = m.to;
+			}
+		}
 		moves[i] = m;
 		draw(board);
-		check = detect_check(&board, m.to);
+		check = detect_check(&board, c == White ? black_king_pos : white_king_pos);
 		if (check) {
 			puts("Check!");
 		}
