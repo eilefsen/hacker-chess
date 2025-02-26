@@ -1,7 +1,14 @@
+#include "validate.h"
+#include <stdlib.h>
+#include <malloc.h>
+#include <errno.h>
+#include <string.h>
 #include <stdio.h>
 
 #include "check.h"
 
+#include "macro.h"
+#include "types.h"
 #include "move.h"
 #include "pieces/bishop.h"
 #include "pieces/king.h"
@@ -39,7 +46,6 @@ bool make_move(Board *b, Move m, enum Color c) {
 
 	switch (from_p.kind) {
 	case None:
-		fputs("Piece is empty", stderr);
 		is_valid = false;
 		break;
 	case Pawn:

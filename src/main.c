@@ -5,6 +5,7 @@
 #include "check.h"
 #include "move.h"
 #include "types.h"
+#include "macro.h"
 
 #define INPUT_MAX 9
 
@@ -140,6 +141,10 @@ int main(void) {
 		draw(board);
 		check = detect_check(&board, c == White ? black_king_pos : white_king_pos);
 		if (check) {
+			if (detect_checkmate(&board, c == White ? black_king_pos : white_king_pos)) {
+				printf("Checkmate! %s wins!\n", c == White ? "white" : "black");
+				return 0;
+			}
 			puts("Check!");
 		}
 		++i;

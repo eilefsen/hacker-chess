@@ -1,3 +1,17 @@
+option(DEBUG_PRINT, "Activates print debugging" OFF)
+option(DEBUG_PRINT_CHECK, "Activates print debugging for check and checkmate" OFF)
+option(DEBUG_PRINT_VALIDATE, "Activates print debugging for move validation" OFF)
+
+if(DEBUG_PRINT)
+	add_compile_definitions(DEBUG_PRINT)
+endif()
+if(DEBUG_PRINT_CHECK)
+	add_compile_definitions(DEBUG_PRINT_CHECK)
+endif()
+if(DEBUG_PRINT_VALIDATE)
+	add_compile_definitions(DEBUG_PRINT_VALIDATE)
+endif()
+
 add_executable(${PROJECT_NAME}
 		main.c validate.c move.c util.c check.c
 		pieces/pawn.c pieces/knight.c pieces/king.c pieces/rook.c
