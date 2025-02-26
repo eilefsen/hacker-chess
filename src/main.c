@@ -88,18 +88,18 @@ int main(void) {
 
 	// clang-format off
 	Board board = {.pieces = {
-		{{Rook, White, false}, {Knight, White, false}, {Bishop, White, false}, {Queen, White, false}, {King, White, false}, {Bishop, White, false}, {Knight, White, false}, {Rook, White, false}},
-		{{Pawn, White, false}, {Pawn, White, false},   {Pawn, White, false},   {Pawn, White, false},  {Pawn, White, false}, {Pawn, White, false},   {Pawn, White, false},   {Pawn, White, false}},
-		{{None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false},  {None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false}},
-		{{None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false},  {None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false}},
-		{{None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false},  {None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false}},
-		{{None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false},  {None, NoneC, false}, {None, NoneC, false},   {None, NoneC, false},   {None, NoneC, false}},
-		{{Pawn, Black, false}, {Pawn, Black, false},   {Pawn, Black, false},   {Pawn, Black, false},  {Pawn, Black, false}, {Pawn, Black, false},   {Pawn, Black, false},   {Pawn, Black, false}},
-		{{Rook, Black, false}, {Knight, Black, false}, {Bishop, Black, false}, {Queen, Black, false}, {King, Black, false}, {Bishop, Black, false}, {Knight, Black, false}, {Rook, Black, false}},
+		{{Rook, White, false, false}, {Knight, White, false, false}, {Bishop, White, false, false}, {Queen, White, false, false}, {King, White, false, false}, {Bishop, White, false, false}, {Knight, White, false}, {Rook, White, false, false}},
+		{{Pawn, White, false, false}, {Pawn,   White, false, false}, {Pawn,   White, false, false}, {Pawn,  White, false, false}, {Pawn, White, false, false}, {Pawn,   White, false, false}, {Pawn,   White, false}, {Pawn, White, false, false}},
+		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
+		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
+		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
+		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
+		{{Pawn, Black, false, false}, {Pawn,   Black, false, false}, {Pawn,   Black, false, false}, {Pawn,  Black, false, false}, {Pawn, Black, false, false}, {Pawn,   Black, false, false}, {Pawn,   Black, false}, {Pawn, Black, false, false}},
+		{{Rook, Black, false, false}, {Knight, Black, false, false}, {Bishop, Black, false, false}, {Queen, Black, false, false}, {King, Black, false, false}, {Bishop, Black, false, false}, {Knight, Black, false}, {Rook, Black, false, false}},
 	}};
 	// clang-format on
 
-	size_t i = 0;
+	int i = 0;
 	enum Color c = White;
 	draw(board);
 
@@ -110,6 +110,14 @@ int main(void) {
 	while (true) {
 		c = i % 2 == 0 ? White : Black; // white to play if `i` is even
 		printf("%s to play:\n", c == White ? "White" : "Black");
+
+		for (int j = 0; j < 8; ++j) {
+			for (int k = 0; k < 8; ++k) {
+				if (board.pieces[j][k].color == c) {
+					board.pieces[j][k].en_passantable = false; // reset en_passantable
+				}
+			}
+		}
 
 		// get input
 		char in[INPUT_MAX];

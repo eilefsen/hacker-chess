@@ -2,20 +2,45 @@
 #include "../validate.h"
 #include <stdio.h>
 
-bool validate_pawn_move(Board *b, Move m, enum Color c, bool should_print) {
+PawnMove validate_pawn_move(Board *b, Move m, enum Color c, bool should_print) {
 	if (!validate_basic(m)) {
-		return false;
+		PawnMove out = {false, false, -1};
+		return out;
 	}
 	int one_forward = m.from.y + (1 * c);
 	int two_forward = m.from.y + (2 * c);
 	bool diagonal = m.to.y == one_forward &&
 					(m.from.x == m.to.x + 1 || m.from.x == m.to.x - 1);
-	if (diagonal && validate_takes(b, m.to, c)) {
+	if (diagonal) {
 		// pawn takes, valid move
-		if (should_print) {
-			puts("Pawn takes!");
+		int enpassant = -1;
+		if(m.to.y == 2) {
+			const Piece lp = b->pieces[3][m.to.x];
+			if (lp.en_passantable) {
+				enpassant = 3;
+			}
+		} else if(m.to.y == 5) {
+			const Piece lp = b->pieces[4][m.to.x];
+			if (lp.en_passantable) {
+				enpassant = 4;
+			}
 		}
-		return true;
+		if (enpassant != -1) {
+			if (should_print) {
+				puts("Pawn takes!");
+			}
+			PawnMove out = {true, false, enpassant};
+			return out;
+		}
+
+
+		if (validate_takes(b, m.to, c)) {
+			if (should_print) {
+				puts("Pawn takes!");
+			}
+			PawnMove out = {true, false, -1};
+			return out;
+		}
 	}
 
 	Piece from_p = b->pieces[m.from.y][m.from.x];
@@ -26,12 +51,19 @@ bool validate_pawn_move(Board *b, Move m, enum Color c, bool should_print) {
 		bool first_move = !from_p.has_moved;
 		if (m.to.y == two_forward && first_move && to_p.kind == None) {
 			// pawn moves two squares forward
-			return b->pieces[one_forward][m.to.x].kind == None;
+			if(b->pieces[one_forward][m.to.x].kind == None) {
+				PawnMove out = {true, true, -1};
+				return out;
+			}
 		} else if (m.to.y == one_forward) {
 			// pawn moves one square forward
-			return to_p.kind == None;
+			if(to_p.kind == None) {
+				PawnMove out = {true, false, -1};
+				return out;
+			}
 		}
 	}
 
-	return false;
+	PawnMove out = {false, false, -1};
+	return out;
 }

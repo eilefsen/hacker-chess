@@ -21,6 +21,7 @@ typedef struct Piece {
 	enum PieceKind kind;
 	enum Color color;
 	bool has_moved;
+	bool en_passantable;
 } Piece;
 
 typedef struct Board {

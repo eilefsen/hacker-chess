@@ -23,12 +23,13 @@ void move_piece(Board *b, Move m) {
 	b->pieces[m.to.y][m.to.x].has_moved = true;
 
 	// set from piece to none/empty
-	Piece empty = {None, NoneC, false};
+	Piece empty = {None, NoneC, false, false};
 	b->pieces[m.from.y][m.from.x] = empty;
 }
 
 // returns true if move sucessful, false if not.
 bool make_move(Board *b, Move m, enum Color c) {
+	DEBUG("DEBUG[make_move]: START\n");
 	bool is_valid = false;
 
 	Piece from_p = b->pieces[m.from.y][m.from.x];
@@ -39,17 +40,57 @@ bool make_move(Board *b, Move m, enum Color c) {
 			"Piece belongs to: %s\n",
 			from_p.color == White ? "White" : "Black"
 		);
+		DEBUG("DEBUG[make_move]: END\n");
 		return false;
 	}
 
 	struct KingMove king_m = {false, false};
+	struct PawnMove pawn_m = {false, false, -1};
 
 	switch (from_p.kind) {
 	case None:
 		is_valid = false;
 		break;
 	case Pawn:
-		is_valid = validate_pawn_move(b, m, c, true);
+		pawn_m = validate_pawn_move(b, m, c, true);
+		is_valid = pawn_m.valid;
+		// first or last rank means promotion
+		if (is_valid) {
+			b->pieces[m.from.y][m.from.x].en_passantable = pawn_m.en_passantable;
+			if (pawn_m.takes_en_passant != -1) {
+				DEBUG("\tpawn_m.takes_en_passant: %d\n", pawn_m.takes_en_passant);
+				b->pieces[pawn_m.takes_en_passant][m.to.x].kind = None;
+				b->pieces[pawn_m.takes_en_passant][m.to.x].color = NoneC;
+				b->pieces[pawn_m.takes_en_passant][m.to.x].has_moved = false;
+				b->pieces[pawn_m.takes_en_passant][m.to.x].en_passantable = false;
+			}
+			if (m.to.y == 0 || m.to.y == 7) {
+				// get input
+				fputs("Promote pawn [Q/n/r/b]: ", stdout);
+				char in;
+				while (1) {
+					in = fgetc(stdin);
+					if (in == 'q' || in == 'Q' || in == '\n') {
+						// newline means user entered nothing. default to queen.
+						b->pieces[m.from.y][m.from.x].kind = 'Q';
+						break;
+					} else if (in == 'n' || in == 'N') {
+						b->pieces[m.from.y][m.from.x].kind = 'N';
+						break;
+					} else if (in == 'r' || in == 'R') {
+						b->pieces[m.from.y][m.from.x].kind = 'R';
+						break;
+					} else if (in == 'b' || in == 'B') {
+						b->pieces[m.from.y][m.from.x].kind = 'B';
+						break;
+					} else {
+						fprintf(stderr, "Invalid piece kind: %c\n", in);
+						// loops back around
+					}
+				}
+			}
+		}
+
 		break;
 	case Knight:
 		is_valid = validate_knight_move(b, m, c, true);
@@ -64,7 +105,7 @@ bool make_move(Board *b, Move m, enum Color c) {
 		is_valid = validate_queen_move(b, m, c, true);
 		break;
 	case King:
-		// TODO: check that this works in all cases
+		// TODO: check that this works in all cases, especially checks
 		king_m = validate_king_move(b, m, c, true);
 		if (king_m.valid) {
 			if (king_m.castle == Short_Castle) {
@@ -72,6 +113,7 @@ bool make_move(Board *b, Move m, enum Color c) {
 				if (detect_check(b, m.from) || detect_check(b, through) ||
 					detect_check(b, m.to)) {
 					fputs("Castle blocked by check!", stderr);
+					DEBUG("DEBUG[make_move]: END\n");
 					return false;
 				}
 
@@ -94,6 +136,7 @@ bool make_move(Board *b, Move m, enum Color c) {
 				if (detect_check(b, m.from) || detect_check(b, through) ||
 					detect_check(b, m.to)) {
 					fputs("Castle blocked by check!\n", stderr);
+					DEBUG("DEBUG[make_move]: END\n");
 					return false;
 				}
 
@@ -113,17 +156,21 @@ bool make_move(Board *b, Move m, enum Color c) {
 				return true;
 			} else if (detect_check(b, m.to)) {
 				fputs("King would be in check!\n", stderr);
+				DEBUG("DEBUG[make_move]: END\n");
 				return false;
 			}
 			is_valid = true;
 		} else {
+			DEBUG("DEBUG[make_move]: END\n");
 			return false;
 		}
 	}
 
 	if (is_valid) {
 		move_piece(b, m);
+		DEBUG("DEBUG[make_move]: END\n");
 		return true;
 	}
+	DEBUG("DEBUG[make_move]: END\n");
 	return false;
 }

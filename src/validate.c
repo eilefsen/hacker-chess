@@ -34,7 +34,7 @@ bool validate_move(Board *b, Move m, enum Color c) {
 	case None:
 		return false;
 	case Pawn:
-		return validate_pawn_move(b, m, c, false);
+		return validate_pawn_move(b, m, c, false).valid;
 	case Knight:
 		return validate_knight_move(b, m, c, false);
 	case Rook:
