@@ -3,28 +3,28 @@
 
 #include "util.h"
 
-void get_piece_name(char s[static 7], enum PieceKind pk) {
+void get_piece_name(char s[static 8], enum PieceKind pk) {
 	switch (pk) {
 	case None:
-		strncpy(s, "None", 6);
+		strncpy(s, "None", 7);
 		break;
 	case King:
-		strncpy(s, "King", 6);
+		strncpy(s, "King", 7);
 		break;
 	case Queen:
-		strncpy(s, "Queen", 6);
+		strncpy(s, "Queen", 7);
 		break;
 	case Rook:
-		strncpy(s, "Rook", 6);
+		strncpy(s, "Rook", 7);
 		break;
 	case Bishop:
-		strncpy(s, "Bishop", 6);
+		strncpy(s, "Bishop", 7);
 		break;
 	case Knight:
-		strncpy(s, "Knight", 6);
+		strncpy(s, "Knight", 7);
 		break;
 	case Pawn:
-		strncpy(s, "Pawn", 6);
+		strncpy(s, "Pawn", 7);
 		break;
 	}
 }

@@ -23,7 +23,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_compile_options(
 	${PROJECT_NAME}
 	PRIVATE
-	-Wall -Wextra -Wpedantic
+	-Wall -Wextra -Wno-unused-value -Wpedantic
 	-Wshadow
 )
 
