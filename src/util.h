@@ -1,3 +1,5 @@
+#pragma once
+
 #include "types.h"
 
 void get_piece_name(char buf[static 7], enum PieceKind pk);

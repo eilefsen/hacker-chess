@@ -1,7 +1,7 @@
-#include "bishop.h"
-#include "../util.h"
 #include "../validate.h"
 #include <stdio.h>
+#include "bishop.h"
+#include "../util.h"
 #include <stdlib.h>
 
 #include "shared.h"

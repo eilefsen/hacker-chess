@@ -10,11 +10,9 @@ KingMove validate_king_move(Board *b, Move m, enum Color c, bool should_print) {
 		KingMove out = {false, None_Castle};
 		return out;
 	}
-	// TODO: implement check interrupting move
 
 	Piece king_p = b->pieces[m.from.y][m.from.x];
 	if (!king_p.has_moved && (m.to.y == 7 || m.to.y == 0)) {
-		// TODO: implement check interrupting castle
 		Piece r_rook_p = b->pieces[m.from.y][7];
 		bool r_empty = b->pieces[m.from.y][5].kind == None &&
 					   b->pieces[m.from.y][6].kind == None;

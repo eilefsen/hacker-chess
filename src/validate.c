@@ -14,13 +14,11 @@
 bool validate_in_bounds(Coordinate pos) {
 	bool inside_x = pos.x < 8 && pos.x >= 0;
 	bool inside_y = pos.y < 8 && pos.y >= 0;
-
 	return inside_x && inside_y;
 }
 
 bool validate_basic(Move m) {
 	bool same_xy = m.to.x == m.from.x && m.to.y == m.from.y;
-
 	return !same_xy && validate_in_bounds(m.to);
 }
 
@@ -34,7 +32,6 @@ bool validate_move(Board *b, Move m, enum Color c) {
 
 	switch (b->pieces[m.from.y][m.from.x].kind) {
 	case None:
-		fputs("Piece is empty", stderr);
 		return false;
 	case Pawn:
 		return validate_pawn_move(b, m, c, false);
@@ -55,4 +52,5 @@ bool validate_move(Board *b, Move m, enum Color c) {
 			return false;
 		}
 	}
+	return false;
 }
