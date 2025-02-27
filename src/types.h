@@ -24,8 +24,12 @@ typedef struct Piece {
 	bool en_passantable;
 } Piece;
 
+Piece PieceNew(enum PieceKind kind, enum Color c);
+Piece NoneNew();
+
+#define BOARD_T(name) struct Piece name[8][8]
 typedef struct Board {
-	struct Piece pieces[8][8];
+	BOARD_T(pieces);
 } Board;
 
 typedef struct Coordinate {

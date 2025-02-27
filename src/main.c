@@ -63,14 +63,14 @@ ParseMoveResult parse_move(char s[INPUT_MAX]) {
 	return out;
 }
 
-void draw(Board b) {
+void draw(BOARD_T(b)) {
 	puts(",---,---,---,---,---,---,---,---,");
 	for (size_t i = 8; i-- > 0;) { // this type of for statement avoids underflow
 		for (size_t j = 0; j < 8; ++j) {
-			if (b.pieces[i][j].kind == None) {
+			if (b[i][j].kind == None) {
 				printf("|   ");
 			} else {
-				Piece p = b.pieces[i][j];
+				Piece p = b[i][j];
 				printf("| %c ", p.color == White ? p.kind : p.kind ^ 32);
 			}
 		}
@@ -85,19 +85,19 @@ void draw(Board b) {
 
 int main(void) {
 	Move moves[100] = {0};
-
 	// clang-format off
-	Board board = {.pieces = {
-		{{Rook, White, false, false}, {Knight, White, false, false}, {Bishop, White, false, false}, {Queen, White, false, false}, {King, White, false, false}, {Bishop, White, false, false}, {Knight, White, false}, {Rook, White, false, false}},
-		{{Pawn, White, false, false}, {Pawn,   White, false, false}, {Pawn,   White, false, false}, {Pawn,  White, false, false}, {Pawn, White, false, false}, {Pawn,   White, false, false}, {Pawn,   White, false}, {Pawn, White, false, false}},
-		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
-		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
-		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
-		{{None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false, false}, {None,  NoneC, false, false}, {None, NoneC, false, false}, {None,   NoneC, false, false}, {None,   NoneC, false}, {None, NoneC, false, false}},
-		{{Pawn, Black, false, false}, {Pawn,   Black, false, false}, {Pawn,   Black, false, false}, {Pawn,  Black, false, false}, {Pawn, Black, false, false}, {Pawn,   Black, false, false}, {Pawn,   Black, false}, {Pawn, Black, false, false}},
-		{{Rook, Black, false, false}, {Knight, Black, false, false}, {Bishop, Black, false, false}, {Queen, Black, false, false}, {King, Black, false, false}, {Bishop, Black, false, false}, {Knight, Black, false}, {Rook, Black, false, false}},
-	}};
+	BOARD_T(board) = {
+		{PieceNew(Rook, White), PieceNew(Knight, White), PieceNew(Bishop, White), PieceNew(Queen, White), PieceNew(King, White), PieceNew(Bishop, White), PieceNew(Knight, White), PieceNew(Rook, White)},
+		{PieceNew(Pawn, White), PieceNew(Pawn,   White), PieceNew(Pawn,   White), PieceNew(Pawn,  White), PieceNew(Pawn, White), PieceNew(Pawn,   White), PieceNew(Pawn,   White), PieceNew(Pawn, White)},
+		{NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew()},
+		{NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew()},
+		{NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew()},
+		{NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew(), NoneNew()},
+		{PieceNew(Pawn, Black), PieceNew(Pawn,   Black), PieceNew(Pawn,   Black), PieceNew(Pawn,  Black), PieceNew(Pawn, Black), PieceNew(Pawn,   Black), PieceNew(Pawn,   Black), PieceNew(Pawn, Black)},
+		{PieceNew(Rook, Black), PieceNew(Knight, Black), PieceNew(Bishop, Black), PieceNew(Queen, Black), PieceNew(King, Black), PieceNew(Bishop, Black), PieceNew(Knight, Black), PieceNew(Rook, Black)},
+	};
 	// clang-format on
+	printf("%d", sizeof(Piece));
 
 	int i = 0;
 	enum Color c = White;
@@ -113,8 +113,8 @@ int main(void) {
 
 		for (int j = 0; j < 8; ++j) {
 			for (int k = 0; k < 8; ++k) {
-				if (board.pieces[j][k].color == c) {
-					board.pieces[j][k].en_passantable = false; // reset en_passantable
+				if (board[j][k].color == c) {
+					board[j][k].en_passantable = false; // reset en_passantable
 				}
 			}
 		}
@@ -133,8 +133,8 @@ int main(void) {
 			continue; // skip rest, dont increment i
 		}
 		Move m = move_maybe.move;
-		Piece p = board.pieces[m.from.y][m.from.x];
-		if (!make_move(&board, m, c)) {
+		Piece p = board[m.from.y][m.from.x];
+		if (!make_move(board, m, c)) {
 			fprintf(stderr, "Invalid move: %c %s\n", p.kind, in);
 			continue;
 		};
@@ -147,9 +147,9 @@ int main(void) {
 		}
 		moves[i] = m;
 		draw(board);
-		check = detect_check(&board, c == White ? black_king_pos : white_king_pos);
+		check = detect_check(board, c == White ? black_king_pos : white_king_pos);
 		if (check) {
-			if (detect_checkmate(&board, c == White ? black_king_pos : white_king_pos)) {
+			if (detect_checkmate(board, c == White ? black_king_pos : white_king_pos)) {
 				printf("Checkmate! %s wins!\n", c == White ? "white" : "black");
 				return 0;
 			}

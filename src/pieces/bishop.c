@@ -6,7 +6,7 @@
 
 #include "shared.h"
 
-bool validate_bishop_move(Board *b, Move m, enum Color c, bool should_print) {
+bool validate_bishop_move(BOARD_T(b), Move m, enum Color c, bool should_print) {
 	if (!validate_basic(m)) {
 		return false;
 	}
@@ -32,5 +32,5 @@ bool validate_bishop_move(Board *b, Move m, enum Color c, bool should_print) {
 		return true;
 	}
 
-	return b->pieces[m.to.y][m.to.x].kind == None;
+	return b[m.to.y][m.to.x].kind == None;
 }

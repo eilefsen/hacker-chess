@@ -9,4 +9,4 @@ typedef struct PawnMove {
 	bool en_passantable;
 	int takes_en_passant; // y coordinate of piece to take. -1 if N/A.
 } PawnMove;
-PawnMove validate_pawn_move(Board *b, Move m, enum Color c, bool should_print);
+PawnMove validate_pawn_move(BOARD_T(b), Move m, enum Color c, bool should_print);

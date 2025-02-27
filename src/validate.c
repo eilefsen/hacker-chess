@@ -22,15 +22,15 @@ bool validate_basic(Move m) {
 	return !same_xy && validate_in_bounds(m.to);
 }
 
-bool validate_takes(Board *b, Coordinate pos, enum Color c) {
-	Piece p = b->pieces[pos.y][pos.x];
+bool validate_takes(BOARD_T(b), Coordinate pos, enum Color c) {
+	Piece p = b[pos.y][pos.x];
 	return p.kind != None && p.color != c;
 }
 
-bool validate_move(Board *b, Move m, enum Color c) {
+bool validate_move(BOARD_T(b), Move m, enum Color c) {
 	struct KingMove king_m = {false, false};
 
-	switch (b->pieces[m.from.y][m.from.x].kind) {
+	switch (b[m.from.y][m.from.x].kind) {
 	case None:
 		return false;
 	case Pawn:

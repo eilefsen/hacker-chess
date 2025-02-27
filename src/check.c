@@ -14,14 +14,14 @@
 #include "pieces/king.h"
 
 
-bool detect_check(Board *b, Coordinate king_pos) {
+bool detect_check(BOARD_T(b), Coordinate king_pos) {
 	DEBUG_CHECK("DEBUG[detect_check]: START\n");
 	DEBUG_CHECK("\tking_pos: x:%d, y:%d;\n", king_pos.x, king_pos.y);
 
-	enum Color king_color = b->pieces[king_pos.y][king_pos.x].color;
+	enum Color king_color = b[king_pos.y][king_pos.x].color;
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
-			Piece p = b->pieces[i][j];
+			Piece p = b[i][j];
 			if (p.kind == None || p.color == king_color) {
 				continue;
 			}
@@ -42,27 +42,27 @@ bool detect_check(Board *b, Coordinate king_pos) {
 }
 
 // Returns true if there is a checkmate
-bool detect_checkmate(Board *b, Coordinate king_pos) {
+bool detect_checkmate(BOARD_T(b), Coordinate king_pos) {
 
-	enum Color king_color = b->pieces[king_pos.y][king_pos.x].color;
+	enum Color king_color = b[king_pos.y][king_pos.x].color;
 	DEBUG_CHECK("DEBUG[detect_checkmate]: START\n");
 	DEBUG_CHECK("\tking_pos=x:%dy:%d\n", king_pos.x, king_pos.y);
 
-	Board lb;
+	BOARD_T(lb);
 	MovePtr moves = get_all_valid_moves(b, king_color);
 
 	for (size_t i = 0; i < moves.length; i++) {
-		memcpy(lb.pieces, b->pieces, sizeof b->pieces);
+		memcpy(lb, b, sizeof lb);
 		Move m = moves.moves[i];
 		DEBUG_CHECK("\to=x:%dy:%d\n", m.to.x, m.to.y);
 
 		Coordinate kp = king_pos;
-		if (lb.pieces[m.from.y][m.from.x].kind == King) {
+		if (lb[m.from.y][m.from.x].kind == King) {
 			kp = m.to;
 		}
 
-		move_piece(&lb, m);
-		if (!detect_check(&lb, kp)) {
+		move_piece(lb, m);
+		if (!detect_check(lb, kp)) {
 			DEBUG_CHECK("\t\tNot checkmate!\n");
 			return false;
 		}
@@ -76,7 +76,7 @@ bool detect_checkmate(Board *b, Coordinate king_pos) {
 
 // Checks all pieces for all possible moves and returns a struct containing a Heap allocated
 // Move pointer and length integer.
-MovePtr get_all_valid_moves(Board *b, enum Color c) {
+MovePtr get_all_valid_moves(BOARD_T(b), enum Color c) {
 	DEBUG_CHECK("DEBUG[get_all_valid_moves]: START\n");
 
 	int bishop_count = 0;
@@ -86,7 +86,7 @@ MovePtr get_all_valid_moves(Board *b, enum Color c) {
 	int pawn_count = 0;
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
-			Piece p = b->pieces[i][j];
+			Piece p = b[i][j];
 			if (p.kind == None || p.color != c) {
 				continue;
 			}
@@ -138,7 +138,7 @@ MovePtr get_all_valid_moves(Board *b, enum Color c) {
 	size_t move_counter = 0;
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
-			Piece p = b->pieces[i][j];
+			Piece p = b[i][j];
 			if (p.kind == None || p.color != c) {
 				continue;
 			} 

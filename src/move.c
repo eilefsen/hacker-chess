@@ -17,22 +17,22 @@
 #include "pieces/queen.h"
 #include "pieces/rook.h"
 
-void move_piece(Board *b, Move m) {
+void move_piece(BOARD_T(b), Move m) {
 	// set to piece to the value of from piece
-	b->pieces[m.to.y][m.to.x] = b->pieces[m.from.y][m.from.x];
-	b->pieces[m.to.y][m.to.x].has_moved = true;
+	b[m.to.y][m.to.x] = b[m.from.y][m.from.x];
+	b[m.to.y][m.to.x].has_moved = true;
 
 	// set from piece to none/empty
 	Piece empty = {None, NoneC, false, false};
-	b->pieces[m.from.y][m.from.x] = empty;
+	b[m.from.y][m.from.x] = empty;
 }
 
 // returns true if move sucessful, false if not.
-bool make_move(Board *b, Move m, enum Color c) {
+bool make_move(BOARD_T(b), Move m, enum Color c) {
 	DEBUG("DEBUG[make_move]: START\n");
 	bool is_valid = false;
 
-	Piece from_p = b->pieces[m.from.y][m.from.x];
+	Piece from_p = b[m.from.y][m.from.x];
 
 	if (from_p.color != c) {
 		fprintf(
@@ -56,13 +56,13 @@ bool make_move(Board *b, Move m, enum Color c) {
 		is_valid = pawn_m.valid;
 		// first or last rank means promotion
 		if (is_valid) {
-			b->pieces[m.from.y][m.from.x].en_passantable = pawn_m.en_passantable;
+			b[m.from.y][m.from.x].en_passantable = pawn_m.en_passantable;
 			if (pawn_m.takes_en_passant != -1) {
 				DEBUG("\tpawn_m.takes_en_passant: %d\n", pawn_m.takes_en_passant);
-				b->pieces[pawn_m.takes_en_passant][m.to.x].kind = None;
-				b->pieces[pawn_m.takes_en_passant][m.to.x].color = NoneC;
-				b->pieces[pawn_m.takes_en_passant][m.to.x].has_moved = false;
-				b->pieces[pawn_m.takes_en_passant][m.to.x].en_passantable = false;
+				b[pawn_m.takes_en_passant][m.to.x].kind = None;
+				b[pawn_m.takes_en_passant][m.to.x].color = NoneC;
+				b[pawn_m.takes_en_passant][m.to.x].has_moved = false;
+				b[pawn_m.takes_en_passant][m.to.x].en_passantable = false;
 			}
 			if (m.to.y == 0 || m.to.y == 7) {
 				// get input
@@ -72,16 +72,16 @@ bool make_move(Board *b, Move m, enum Color c) {
 					in = fgetc(stdin);
 					if (in == 'q' || in == 'Q' || in == '\n') {
 						// newline means user entered nothing. default to queen.
-						b->pieces[m.from.y][m.from.x].kind = 'Q';
+						b[m.from.y][m.from.x].kind = 'Q';
 						break;
 					} else if (in == 'n' || in == 'N') {
-						b->pieces[m.from.y][m.from.x].kind = 'N';
+						b[m.from.y][m.from.x].kind = 'N';
 						break;
 					} else if (in == 'r' || in == 'R') {
-						b->pieces[m.from.y][m.from.x].kind = 'R';
+						b[m.from.y][m.from.x].kind = 'R';
 						break;
 					} else if (in == 'b' || in == 'B') {
-						b->pieces[m.from.y][m.from.x].kind = 'B';
+						b[m.from.y][m.from.x].kind = 'B';
 						break;
 					} else {
 						fprintf(stderr, "Invalid piece kind: %c\n", in);
@@ -118,17 +118,17 @@ bool make_move(Board *b, Move m, enum Color c) {
 				}
 
 				puts("King castles short!");
-				b->pieces[m.to.y][6] = b->pieces[m.from.y][4];
-				b->pieces[m.to.y][6].has_moved = true;
-				b->pieces[m.from.y][4].kind = None;
-				b->pieces[m.from.y][4].color = NoneC;
-				b->pieces[m.from.y][4].has_moved = false;
+				b[m.to.y][6] = b[m.from.y][4];
+				b[m.to.y][6].has_moved = true;
+				b[m.from.y][4].kind = None;
+				b[m.from.y][4].color = NoneC;
+				b[m.from.y][4].has_moved = false;
 
-				b->pieces[m.to.y][5] = b->pieces[m.from.y][7];
-				b->pieces[m.to.y][5].has_moved = true;
-				b->pieces[m.from.y][7].kind = None;
-				b->pieces[m.from.y][7].color = NoneC;
-				b->pieces[m.from.y][7].has_moved = false;
+				b[m.to.y][5] = b[m.from.y][7];
+				b[m.to.y][5].has_moved = true;
+				b[m.from.y][7].kind = None;
+				b[m.from.y][7].color = NoneC;
+				b[m.from.y][7].has_moved = false;
 
 				return true;
 			} else if (king_m.castle == Long_Castle) {
@@ -141,17 +141,17 @@ bool make_move(Board *b, Move m, enum Color c) {
 				}
 
 				puts("King castles long!");
-				b->pieces[m.to.y][2] = b->pieces[m.from.y][4];
-				b->pieces[m.to.y][2].has_moved = true;
-				b->pieces[m.from.y][4].kind = None;
-				b->pieces[m.from.y][4].color = NoneC;
-				b->pieces[m.from.y][4].has_moved = false;
+				b[m.to.y][2] = b[m.from.y][4];
+				b[m.to.y][2].has_moved = true;
+				b[m.from.y][4].kind = None;
+				b[m.from.y][4].color = NoneC;
+				b[m.from.y][4].has_moved = false;
 
-				b->pieces[m.to.y][3] = b->pieces[m.from.y][0];
-				b->pieces[m.to.y][3].has_moved = true;
-				b->pieces[m.from.y][0].kind = None;
-				b->pieces[m.from.y][0].color = NoneC;
-				b->pieces[m.from.y][0].has_moved = false;
+				b[m.to.y][3] = b[m.from.y][0];
+				b[m.to.y][3].has_moved = true;
+				b[m.from.y][0].kind = None;
+				b[m.from.y][0].color = NoneC;
+				b[m.from.y][0].has_moved = false;
 
 				return true;
 			} else if (detect_check(b, m.to)) {
