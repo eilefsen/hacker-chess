@@ -107,7 +107,6 @@ int main(void) {
 	Coordinate white_king_pos = {4,0};
 
 	while (true) {
-		c = i % 2 == 0 ? White : Black; // white to play if `i` is even
 		printf("%s to play:\n", c == White ? "White" : "Black");
 
 		for (int j = 0; j < 8; ++j) {
@@ -155,6 +154,10 @@ int main(void) {
 			puts("Check!");
 		}
 		++i;
+		// Invert two's complement (flip White to Black, and vice versa)
+		// NOTE: This is not portable; not all machines use two's complement!
+		// It also only works for 1 and -1
+		c ^= -2; 
 	}
 	printf("%d", moves[0].from.x);
 
