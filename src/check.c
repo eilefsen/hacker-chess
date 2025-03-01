@@ -74,35 +74,53 @@ bool detect_checkmate(BOARD_T(b), Coordinate king_pos) {
 }
 
 
-// Checks all pieces for all possible moves and returns a struct containing a Heap allocated
-// Move pointer and length integer.
-MovePtr get_all_valid_moves(BOARD_T(b), enum Color c) {
-	DEBUG_CHECK("DEBUG[get_all_valid_moves]: START\n");
+typedef struct piece_count_t {
+	int bishops;
+	int rooks;
+	int queens;
+	int knights;
+	int pawns;
+} piece_count_t;
+#define DEBUG_PIECE_COUNT(count) DEBUG_CHECK("\t\tbishops = %d\n", count.bishops); DEBUG_CHECK("\t\trooks   = %d\n", count.rooks); DEBUG_CHECK("\t\tknights = %d\n", count.knights); DEBUG_CHECK("\t\tqueens  = %d\n", count.queens); DEBUG_CHECK("\t\tpawns   = %d\n", count.pawns)
 
-	int bishop_count = 0;
-	int rook_count = 0;
-	int queen_count = 0;
-	int knight_count = 0;
-	int pawn_count = 0;
+piece_count_t count_pieces(BOARD_T(b), enum Color c) {
+	DEBUG("DEBUG[count_pieces]: START\n");
+	piece_count_t count = {0};
+
+	DEBUG_CHECK("\tBEFORE:\n");
+	DEBUG_PIECE_COUNT(count);
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			Piece p = b[i][j];
-			if (p.kind == None || p.color != c) {
+			if (p.color != c) {
 				continue;
 			}
 			if (p.kind == Bishop) {
-				bishop_count++;
+				count.bishops++;
 			} else if (p.kind == Rook) {
-				rook_count++;
+				count.rooks++;
 			} else if (p.kind == Queen) {
-				queen_count++;
+				count.queens++;
 			} else if (p.kind == Knight) {
-				knight_count++;
+				count.knights++;
 			} else if (p.kind == Pawn) {
-				pawn_count++;
+				count.pawns++;
 			}
 		}
 	}
+	DEBUG("\tAFTER:\n");
+	DEBUG_PIECE_COUNT(count);
+	DEBUG("DEBUG[count_pieces]: END\n");
+	return count;
+}
+
+
+// Checks all pieces for all possible moves and returns a struct containing a Heap allocated
+// Move pointer and length integer.
+MovePtr get_all_valid_moves(BOARD_T(b), enum Color c) {
+	DEBUG("DEBUG[get_all_valid_moves]: START\n");
+
+	piece_count_t count = count_pieces(b, c);
 
 	// Bishops can visit a max of 13 different squares on the same move,
 	// multiply amount of bishops by 13.
@@ -121,17 +139,19 @@ MovePtr get_all_valid_moves(BOARD_T(b), enum Color c) {
 	//
 	// Kings can visit a max of 8 different squares on the same move,
 	// add 8 to total (there is always a king, and only one).
+	DEBUG_PIECE_COUNT(count);
 	const size_t max_moves =  
-		(13 * bishop_count)
-		+ (14 * rook_count)
-		+ (8 * knight_count)
-		+ (queen_count * 27)
-		+ (pawn_count * 2)
+		(13 * count.bishops)
+		+ (14 * count.rooks)
+		+ (8  * count.knights)
+		+ (27 * count.queens)
+		+ (2  * count.pawns)
 		+ 8;
+	DEBUG("\tmax_moves = %ld", max_moves);
 	errno = 0;
 	Move *moves = malloc(max_moves * sizeof *moves);
 	if (errno != 0) {
-		DEBUG_CHECK("ERROR[get_all_valid_moves]: malloc failed with error %d", errno);
+		fprintf(stderr, "ERROR[get_all_valid_moves]: malloc failed with error %d", errno);
 		exit(EXIT_FAILURE);
 	}
 
@@ -219,5 +239,5 @@ MovePtr get_all_valid_moves(BOARD_T(b), enum Color c) {
 	}
 	MovePtr out = {.moves = moves, .length = move_counter};
 	return out;
-	DEBUG_CHECK("DEBUG[get_all_valid_moves]: END\n");
+	DEBUG("DEBUG[get_all_valid_moves]: END\n");
 }
