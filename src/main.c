@@ -65,7 +65,7 @@ ParseMoveResult parse_move(char s[INPUT_MAX]) {
 
 void draw(BOARD_T(b)) {
 	puts(",---,---,---,---,---,---,---,---,");
-	for (size_t i = 8; i-- > 0;) { // this type of for statement avoids underflow
+	for (size_t i = 8; i-- > 0;) { /* this type of for statement avoids underflow */
 		for (size_t j = 0; j < 8; ++j) {
 			if (b[i][j].kind == None) {
 				printf("|   ");
@@ -97,7 +97,6 @@ int main(void) {
 		{PieceNew(Rook, Black), PieceNew(Knight, Black), PieceNew(Bishop, Black), PieceNew(Queen, Black), PieceNew(King, Black), PieceNew(Bishop, Black), PieceNew(Knight, Black), PieceNew(Rook, Black)},
 	};
 	// clang-format on
-	printf("%d", sizeof(Piece));
 
 	int i = 0;
 	enum Color c = White;
@@ -114,7 +113,7 @@ int main(void) {
 		for (int j = 0; j < 8; ++j) {
 			for (int k = 0; k < 8; ++k) {
 				if (board[j][k].color == c) {
-					board[j][k].en_passantable = false; // reset en_passantable
+					board[j][k].en_passantable = false; /* reset en_passantable */
 				}
 			}
 		}
@@ -122,7 +121,7 @@ int main(void) {
 		// get input
 		char in[INPUT_MAX];
 		fgets(in, INPUT_MAX, stdin);
-		in[strcspn(in, "\n")] = 0; // set final \n in string to null char
+		in[strcspn(in, "\n")] = 0; /* set final \n in string to null char */
 		if (strnlen(in, INPUT_MAX) == 0) {
 			continue;
 		}
@@ -130,7 +129,7 @@ int main(void) {
 		ParseMoveResult move_maybe = parse_move(in);
 		if (move_maybe.error) {
 			fprintf(stderr, "Invalid Command: %s\n", in);
-			continue; // skip rest, dont increment i
+			continue; /* skip rest, dont increment i */
 		}
 		Move m = move_maybe.move;
 		Piece p = board[m.from.y][m.from.x];
