@@ -28,7 +28,7 @@ void move_piece(BOARD_T(b), Move m) {
 }
 
 // returns true if move sucessful, false if not.
-bool make_move(BOARD_T(b), Move m, enum Color c) {
+bool make_move(BOARD_T(b), Move m, enum Color c, Coordinate king_pos) {
 	DEBUG("DEBUG[make_move]: START\n");
 	bool is_valid = false;
 
@@ -90,7 +90,6 @@ bool make_move(BOARD_T(b), Move m, enum Color c) {
 				}
 			}
 		}
-
 		break;
 	case Knight:
 		is_valid = validate_knight_move(b, m, c, true);
@@ -110,8 +109,8 @@ bool make_move(BOARD_T(b), Move m, enum Color c) {
 		if (king_m.valid) {
 			if (king_m.castle == Short_Castle) {
 				Coordinate through = {.x = 5, .y = m.from.y};
-				if (detect_check(b, m.from) || detect_check(b, through) ||
-					detect_check(b, m.to)) {
+				if (detect_check(b, m.from, c) || detect_check(b, through, c) ||
+					detect_check(b, m.to, c)) {
 					fputs("Castle blocked by check!", stderr);
 					DEBUG("DEBUG[make_move]: END\n");
 					return false;
@@ -133,8 +132,8 @@ bool make_move(BOARD_T(b), Move m, enum Color c) {
 				return true;
 			} else if (king_m.castle == Long_Castle) {
 				Coordinate through = {.x = 2, .y = m.from.y};
-				if (detect_check(b, m.from) || detect_check(b, through) ||
-					detect_check(b, m.to)) {
+				if (detect_check(b, m.from, c) || detect_check(b, through, c) ||
+					detect_check(b, m.to, c)) {
 					fputs("Castle blocked by check!\n", stderr);
 					DEBUG("DEBUG[make_move]: END\n");
 					return false;
@@ -154,10 +153,6 @@ bool make_move(BOARD_T(b), Move m, enum Color c) {
 				b[m.from.y][0].has_moved = false;
 
 				return true;
-			} else if (detect_check(b, m.to)) {
-				fputs("King would be in check!\n", stderr);
-				DEBUG("DEBUG[make_move]: END\n");
-				return false;
 			}
 			is_valid = true;
 		} else {
@@ -165,12 +160,26 @@ bool make_move(BOARD_T(b), Move m, enum Color c) {
 			return false;
 		}
 	}
+	BOARD_T(lb);
+	memcpy(lb, b, sizeof lb);
+	move_piece(lb, m);
 
-	if (is_valid) {
+	bool check1 = false;
+	if(b[king_pos.y][king_pos.x].kind == King) {
+		check1 = detect_check(lb, king_pos, c);
+	}
+	bool check2 = detect_check(lb, m.to, c);
+	if (check1) {
+		DEBUG("\tKing would still be in check!\n");
+	}
+	if (check2) {
+		DEBUG("\tKing cannot move into check!\n");
+	} 
+
+	bool can_move = is_valid && !check1 && !check2;
+	if (can_move) {
 		move_piece(b, m);
-		DEBUG("DEBUG[make_move]: END\n");
-		return true;
 	}
 	DEBUG("DEBUG[make_move]: END\n");
-	return false;
+	return can_move;
 }

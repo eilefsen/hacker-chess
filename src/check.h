@@ -6,7 +6,7 @@
 #include "types.h"
 #include "macro.h"
 
-bool detect_check(BOARD_T(b), Coordinate king_pos);
+bool detect_check(BOARD_T(b), Coordinate king_pos, enum Color king_color);
 bool detect_checkmate(BOARD_T(b), Coordinate king_pos);
 
 typedef struct MovePtr {

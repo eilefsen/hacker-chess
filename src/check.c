@@ -14,11 +14,17 @@
 #include "pieces/king.h"
 
 
-bool detect_check(BOARD_T(b), Coordinate king_pos) {
-	DEBUG_CHECK("DEBUG[detect_check]: START\n");
-	DEBUG_CHECK("\tking_pos: x:%d, y:%d;\n", king_pos.x, king_pos.y);
+bool detect_check(BOARD_T(b), Coordinate king_pos, enum Color king_color) {
+	DEBUG("DEBUG[detect_check]: START\n");
+	DEBUG("pos: x:%d, y:%d;\n", king_pos.x, king_pos.y);
+	Piece king_piece = b[king_pos.y][king_pos.x] ;
 
-	enum Color king_color = b[king_pos.y][king_pos.x].color;
+	if(king_piece.kind != King) {
+		DEBUG("\tpiece being checked is not a king!: kind: %c\n", king_piece.kind);
+		DEBUG("DEBUG[detect_check]: END\n");
+		return false;
+	}
+
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			Piece p = b[i][j];
@@ -32,12 +38,13 @@ bool detect_check(BOARD_T(b), Coordinate king_pos) {
 				.to = king_pos
 			};
 			if (validate_move(b, m, p.color)) {
-				DEBUG_CHECK("\tCHECK\n");
+				DEBUG("\tCHECK\n");
+				DEBUG("DEBUG[detect_check]: END\n");
 				return true;
 			}
 		}
 	}
-	DEBUG_CHECK("DEBUG[detect_check]: END\n");
+	DEBUG("DEBUG[detect_check]: END\n");
 	return false;
 }
 
@@ -62,7 +69,7 @@ bool detect_checkmate(BOARD_T(b), Coordinate king_pos) {
 		}
 
 		move_piece(lb, m);
-		if (!detect_check(lb, kp)) {
+		if (!detect_check(lb, kp, king_color)) {
 			DEBUG_CHECK("\t\tNot checkmate!\n");
 			return false;
 		}

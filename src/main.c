@@ -105,8 +105,12 @@ int main(void) {
 	bool check = false;
 	Coordinate black_king_pos = {4,7};
 	Coordinate white_king_pos = {4,0};
+	Coordinate *cur_king_pos = &white_king_pos;
+	Coordinate *other_king_pos = &black_king_pos;
 
 	while (true) {
+		cur_king_pos = c == White ? &white_king_pos : &black_king_pos;
+		other_king_pos = c == Black ? &white_king_pos : &black_king_pos;
 		printf("%s to play:\n", c == White ? "White" : "Black");
 
 		for (int j = 0; j < 8; ++j) {
@@ -132,7 +136,8 @@ int main(void) {
 		}
 		Move m = move_maybe.move;
 		Piece p = board[m.from.y][m.from.x];
-		if (!make_move(board, m, c)) {
+
+		if (!make_move(board, m, c, *cur_king_pos)) {
 			fprintf(stderr, "Invalid move: %c %s\n", p.kind, in);
 			continue;
 		};
@@ -145,19 +150,18 @@ int main(void) {
 		}
 		moves[i] = m;
 		draw(board);
-		check = detect_check(board, c == White ? black_king_pos : white_king_pos);
+		check = detect_check(board, *other_king_pos, ~c + 1); /* detect check on other player */
 		if (check) {
-			if (detect_checkmate(board, c == White ? black_king_pos : white_king_pos)) {
-				printf("Checkmate! %s wins!\n", c == White ? "white" : "black");
+			if (detect_checkmate(board, *other_king_pos)) {
+				printf("Checkmate! %s wins!\n", c == White ? "white" : c == Black ? "black" : "none??");
 				return 0;
 			}
 			puts("Check!");
 		}
 		++i;
-		// Invert two's complement (flip White to Black, and vice versa)
+		// Negate two's complement (flip White to Black, and vice versa)
 		// NOTE: This is not portable; not all machines use two's complement!
-		// It also only works for 1 and -1
-		c ^= -2; 
+		c = ~c + 1; 
 	}
 	printf("%d", moves[0].from.x);
 
