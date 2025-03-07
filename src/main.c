@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "check.h"
-#include "move.h"
 #include "types.h"
+#include "move.h"
 #include "macro.h"
 
 #define INPUT_MAX 9
@@ -30,8 +30,9 @@ struct CharResult {
 	return out;
 }
 
-// A move command is of the form "[A-H><1-8>[A-H][1-8]", where the first group is the
-// piece to move, and the second group is the destination
+// A move command is of the form "<[A-H][1-8]><[A-H][1-8]>", where the first
+// group is the piece to move, and the second group is the destination.
+// EXAMPLES: e2e4 E7E5 f8b4, and so on...
 ParseMoveResult parse_move(char s[INPUT_MAX]) {
 	int y1 = 0, y2 = 0, x1 = 0, x2 = 0;
 	char xc1, xc2;
